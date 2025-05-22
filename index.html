@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Animated Website - Dark Mode</title>
+  <style>
+    /* Same styles as before (omitted here for brevity, just copy-paste previous CSS) */
+    /* ... */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      line-height: 1.6;
+      transition: background-color 0.3s ease;
+    }
+
+    h2, h3 {
+      font-size: 1.4rem;
+      color: #ffffff;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #cccccc;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      background-color: #2a2a2a;
+      padding: 12px 0;
+      border-radius: 5px 5px 0 0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .tab-button {
+      padding: 12px 20px;
+      font-size: 1rem;
+      color: #f0f0f0;
+      cursor: pointer;
+      border: none;
+      background-color: #2a2a2a;
+      border-radius: 5px;
+      transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .tab-button:hover {
+      background-color: #444;
+      transform: scale(1.1);
+      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+    }
+
+    .tab-button.active {
+      background-color: #444;
+      transform: scale(1.1);
+      color: #ffffff;
+    }
+
+    .tab-content {
+      display: none;
+      opacity: 0;
+      padding: 20px;
+      background-color: #1c1c1c;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.05);
+      margin-top: 20px;
+      transition: opacity 0.5s ease-in-out, transform 0.5s ease;
+      transform: translateY(20px);
+    }
+
+    .tab-content.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .tab-button:before {
+      font-family: "Font Awesome 5 Free";
+      padding-right: 10px;
+    }
+
+    .tab-button.profile:before { content: "\f2c2"; }
+    .tab-button.business:before { content: "\f0b2"; }
+    .tab-button.selected:before { content: "\f1ad"; }
+    .tab-button.suggestion:before { content: "\f0eb"; }
+
+    .profile-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .profile-image {
+      width: 300px;
+      height: 180px;
+      object-fit: cover;
+      margin-right: 20px;
+      border: 5px solid #555;
+    }
+
+    .brand-logo {
+      margin-right: 15px;
+      border-radius: 10px;
+    }
+
+    .logo-row {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .contact-item {
+      background-color: #222;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin: 15px 0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      transform: translateX(-20px);
+      opacity: 0;
+      animation: slideFadeIn 1s forwards;
+    }
+
+    .contact-item:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .contact-icon {
+      font-size: 1.5rem;
+      color: #00bcd4;
+    }
+
+    .contact-text a {
+      color: #ccc;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    #suggestion textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      resize: vertical;
+      font-size: 1rem;
+      background-color: #2a2a2a;
+      color: #eee;
+      box-shadow: inset 0 0 5px #000;
+      transition: box-shadow 0.3s ease;
+      margin-bottom: 12px;
+    }
+    #suggestion textarea:focus {
+      outline: none;
+      box-shadow: inset 0 0 8px #00bcd4;
+      background-color: #333;
+    }
+
+    #suggestion button {
+      background-color: #00bcd4;
+      color: #121212;
+      padding: 10px 18px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 188, 212, 0.6);
+    }
+    #suggestion button:hover {
+      background-color: #0097a7;
+      box-shadow: 0 6px 12px rgba(0, 151, 167, 0.8);
+    }
+
+    #suggestion-list {
+      margin-top: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+      border-top: 1px solid #444;
+      padding-top: 10px;
+    }
+
+    .suggestion-item {
+      background-color: #2a2a2a;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      color: #cfd8dc;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeInUp 0.5s forwards;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideFadeIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+</head>
+<body>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-button active profile" onclick="openTab('profile')">Profile</button>
+      <button class="tab-button business" onclick="openTab('business')">Business</button>
+      <button class="tab-button selected" onclick="openTab('selected')">Contact</button>
+      <button class="tab-button suggestion" onclick="openTab('suggestion')">Suggestion</button>
+    </div>
+
+    <div id="profile" class="tab-content active">
+      <div class="profile-container">
+        <img src="https://assets.onecompiler.app/43jd9b6yf/43jdbk6j5/mypic.jpg.jpeg" alt="My Profile Photo" class="profile-image">
+        <div class="profile-text">
+          <h2>Hi, I'm Abhinav.A</h2>
+          <p>I'm the CEO and founder behind a trio of visionary startups driving change across construction, technology, and fashion. Through JOBO CONSTRUCTION, ADRON-X Electronics, and DOC Clothing, we’re building a future driven by creativity, innovation, and integrity.</p>
+        </div>
+      </div>
+      <br>
+      <h3>Our Brands</h3>
+      <div class="logo-row">
+        <img src="https://assets.onecompiler.app/43jd9b6yf/43jfpvm2k/my.jpg.jpeg" alt="JOBO Construction Logo" class="brand-logo" width="80" height="80">
+        <img src="https://assets.onecompiler.app/43jd9b6yf/43jfpvm2k/you.jpg.jpeg" alt="ADRON-X Electronics Logo" class="brand-logo" width="80" height="80">
+        <img src="https://assets.onecompiler.app/43jd9b6yf/43jfpvm2k/lol.jpg.jpeg" alt="DOC Clothing Logo" class="brand-logo" width="80" height="80">
+      </div>
+    </div>
+
+    <div id="business" class="tab-content">
+      <h2>Business</h2>
+      <p>🏗️ JOBO CONSTRUCTION - Excellence in modern infrastructure and homes using cutting-edge tech and efficient project management.</p>
+      <br>
+      <p>⚡ ADRON-X ELECTRONICS - Crafting next-gen electronic devices for smarter living with elegant engineering.</p>
+      <br>
+      <p>👕 DOC CLOTHING - Bold streetwear fashion designed for confidence and creativity.</p>
+    </div>
+
+    <div id="selected" class="tab-content">
+      <h2>Contact</h2>
+      <div class="contact-item">
+        <i class="fas fa-phone contact-icon"></i>
+        <div class="contact-text">
+          <a href="tel:+917012592908">+91 7012592908</a>
+        </div>
+      </div>
+      <div class="contact-item">
+        <i class="fas fa-envelope contact-icon"></i>
+        <div class="contact-text">
+          <a href="mailto:abhinavofficial7012@gmail.com">abhinavofficial7012@gmail.com</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="suggestion" class="tab-content">
+      <h2>Suggestion</h2>
+      <p>Share your feedback or suggestions to help us improve your experience. We value your input!</p>
+      <textarea id="suggestion-input" placeholder="Type your suggestion here..."></textarea>
+      <button id="submit-suggestion">Submit</button>
+
+      <div id="suggestion-list"></div>
+    </div>
+  </div>
+
+  <script>
+    function openTab(tabId) {
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => content.classList.remove('active'));
+
+      const buttons = document.querySelectorAll('.tab-button');
+      buttons.forEach(button => button.classList.remove('active'));
+
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    const submitBtn = document.getElementById('submit-suggestion');
+    const suggestionInput = document.getElementById('suggestion-input');
+    const suggestionList = document.getElementById('suggestion-list');
+
+    // Load suggestions from localStorage and render them
+    function loadSuggestions() {
+      const saved = localStorage.getItem('suggestions');
+      if (!saved) return;
+
+      const suggestions = JSON.parse(saved);
+      suggestions.forEach(text => {
+        addSuggestionToDOM(text, false);
+      });
+
+      // Scroll to bottom on load to show latest suggestion
+      suggestionList.scrollTop = suggestionList.scrollHeight;
+    }
+
+    // Add suggestion to the DOM with animation
+    function addSuggestionToDOM(text, animate = true) {
+      const newSuggestion = document.createElement('div');
+      newSuggestion.classList.add('suggestion-item');
+      newSuggestion.textContent = text;
+
+      if (animate) {
+        // Add with animation (default)
+        suggestionList.appendChild(newSuggestion);
+      } else {
+        // Add without animation (e.g. loading saved)
+        newSuggestion.style.opacity = 1;
+        newSuggestion.style.transform = 'translateY(0)';
+        suggestionList.appendChild(newSuggestion);
+      }
+    }
+
+    // Save suggestion to localStorage
+    function saveSuggestion(text) {
+      let suggestions = [];
+      const saved = localStorage.getItem('suggestions');
+      if (saved) {
+        suggestions = JSON.parse(saved);
+      }
+      suggestions.push(text);
+      localStorage.setItem('suggestions', JSON.stringify(suggestions));
+    }
+
+    submitBtn.addEventListener('click', () => {
+      const text = suggestionInput.value.trim();
+      if(text.length === 0) return alert("Please enter a suggestion.");
+
+      addSuggestionToDOM(text);
+      saveSuggestion(text);
+      suggestionInput.value = '';
+
+      suggestionList.scrollTo({
+        top: suggestionList.scrollHeight,
+        behavior: 'smooth'
+      });
+    });
+
+    suggestionInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        submitBtn.click();
+      }
+    });
+
+    // Load saved suggestions on page load
+    window.addEventListener('DOMContentLoaded', loadSuggestions);
+  </script>
+
+</body>
+</html>
